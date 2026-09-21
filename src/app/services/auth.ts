@@ -7,13 +7,13 @@ export class AuthService {
   private readonly TOKEN_KEY = 'psicosafe_auth_token';
   private readonly USER_KEY = 'psicosafe_user_data';
 
-  // Registrar um novo psicólogo
+  
   cadastrar(usuario: { nome: string; email: string; crp: string; senha: string }): boolean {
     localStorage.setItem(this.USER_KEY, JSON.stringify(usuario));
     return true;
   }
 
-  // Fazer login
+ 
   login(email: string, senha: string): boolean {
     const usuarioSalvo = localStorage.getItem(this.USER_KEY);
     if (!usuarioSalvo) return false;
@@ -26,12 +26,11 @@ export class AuthService {
     return false;
   }
 
-  // Verificar se o usuário está logado
+ 
   isAutenticado(): boolean {
     return !!localStorage.getItem(this.TOKEN_KEY);
   }
 
-  // Sair do sistema
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
   }

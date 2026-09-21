@@ -1,0 +1,42 @@
+<header class="navbar">
+  <div class="navbar-brand">
+    <button class="hamburger-btn" (click)="toggleMenu()" aria-label="Abrir Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <h1 class="logo">PsicoSafe </h1>
+  </div>
+
+  <div class="user-action">
+    <button (click)="logout()" class="btn-logout-desktop">Sair</button>
+  </div>
+</header>
+
+<div class="backdrop" *ngIf="isMenuOpen" (click)="fecharMenu()"></div>
+
+<aside class="sidebar" [class.open]="isMenuOpen">
+  <div class="sidebar-header">
+    <h3>Menu do Sistema</h3>
+    <button class="close-btn" (click)="toggleMenu()">✕</button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a routerLink="/dashboard" (click)="fecharMenu()" class="nav-item">
+      <span>📊</span> Dashboard
+    </a>
+    <a routerLink="/agenda" (click)="fecharMenu()" class="nav-item">
+      <span>📅</span> Agenda Clínica
+    </a>
+    <a routerLink="/prontuario" (click)="fecharMenu()" class="nav-item">
+      <span>📋</span> Prontuários (LGPD)
+    </a>
+    <a routerLink="/configuracoes" (click)="fecharMenu()" class="nav-item">
+      <span>⚙️</span> Configurações
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button (click)="logout()" class="btn-logout-mobile">Sair da Conta</button>
+  </div>
+</aside>
