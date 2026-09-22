@@ -1,6 +1,81 @@
 <app-header></app-header>
 
-   <main class="dashboard-container">
-     
-   </main>
+<div class="dashboard-container">
+  
+  <section class="dashboard-top">
+    <div>
+      <h2>Painel Geral</h2>
+      <p class="subtitle">Acompanhe seus atendimentos e métricas em tempo real</p>
+    </div>
 
+    <button 
+      class="btn-privacy" 
+      [class.active]="modoPrivacidade" 
+      (click)="alternarModoPrivacidade()">
+      <span>🔒</span> 
+      {{ modoPrivacidade ? 'Desativar Privacidade' : 'Modo Privacidade (LGPD)' }}
+    </button>
+  </section>
+
+  <section class="cards-grid">
+    <div class="card">
+      <div class="card-icon">📅</div>
+      <div class="card-info">
+        <h3>{{ totalConsultasHoje }}</h3>
+        <p>Consultas Hoje</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">👤</div>
+      <div class="card-info">
+        <h3>{{ totalPacientesAtivos }}</h3>
+        <p>Pacientes Ativos</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">⏳</div>
+      <div class="card-info">
+        <h3>{{ totalPendentes }}</h3>
+        <p>Pendentes de Confirmação</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="table-section">
+    <h3>Atendimentos de Hoje</h3>
+
+    <div class="table-responsive" *ngIf="atendimentosHoje.length > 0; else semAtendimentosHoje">
+      <table>
+        <thead>
+          <tr>
+            <th>Horário</th>
+            <th>Paciente</th>
+            <th>Modalidade</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of atendimentosHoje">
+            <td><strong>{{ item.horario }}</strong></td>
+            <td [class.blur-text]="modoPrivacidade">{{ item.pacienteNome }}</td>
+            <td><span class="badge-type">{{ item.modalidade }}</span></td>
+            <td>
+              <span class="badge-status" [ngClass]="item.status.toLowerCase().replace(' ', '-')">
+                {{ item.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #semAtendimentosHoje>
+      <p style="color: #666; font-size: 0.9rem; margin-top: 12px;">
+        Nenhum atendimento agendado para o dia de hoje.
+      </p>
+    </ng-template>
+  </section>
+
+</div>

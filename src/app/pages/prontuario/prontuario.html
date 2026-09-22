@@ -1,0 +1,109 @@
+<app-header></app-header>
+
+<div class="prontuario-container">
+  
+  <div class="top-bar">
+    <h2>Prontuário Eletrônico</h2>
+    <div class="actions">
+      <button class="btn-privacy" [class.active]="modoPrivacidade" (click)="alternarPrivacidade()">
+        <span>🔒</span> {{ modoPrivacidade ? 'Desativar Privacidade' : 'Modo Privacidade (LGPD)' }}
+      </button>
+      <button class="btn-primary" (click)="exibirModalNovoPaciente = true">+ Novo Paciente</button>
+    </div>
+  </div>
+
+  <div class="prontuario-grid">
+    
+    <aside class="sidebar-pacientes">
+      <div class="search-box">
+        <input 
+          type="text" 
+          placeholder="Buscar paciente por nome..." 
+          [(ngModel)]="filtroBusca"
+        />
+      </div>
+
+      <div class="list-pacientes">
+        <div 
+          *ngFor="let paciente of pacientesFiltrados" 
+          class="paciente-item"
+          [class.selected]="pacienteSelecionado?.id === paciente.id"
+          (click)="selecionarPaciente(paciente)"
+        >
+          <div class="paciente-info">
+            <h4 [class.blur-text]="modoPrivacidade">{{ paciente.nome }}</h4>
+            <span class="status-tag" [class.ativo]="paciente.status === 'Ativo'">{{ paciente.status }}</span>
+          </div>
+          <small>{{ paciente.sessoes.length }} sessão(ões)</small>
+        </div>
+      </div>
+    </aside>
+
+    <main class="detalhes-paciente" *ngIf="pacienteSelecionado; else semPaciente">
+      <div class="paciente-header">
+        <div>
+          <h3 [class.blur-text]="modoPrivacidade">{{ pacienteSelecionado.nome }}</h3>
+          <p class="contato-info" [class.blur-text]="modoPrivacidade">
+            📧 {{ pacienteSelecionado.email || 'Não informado' }} | 📞 {{ pacienteSelecionado.telefone || 'Não informado' }}
+          </p>
+        </div>
+        <button class="btn-danger-outline" (click)="excluirPaciente(pacienteSelecionado.id)">
+          Excluir Registro (LGPD)
+        </button>
+      </div>
+
+      <hr />
+
+      <div class="nova-sessao-box">
+        <h4>Nova Anotação de Sessão</h4>
+        <textarea 
+          rows="3" 
+          placeholder="Digite a evolução do paciente nesta sessão..."
+          [(ngModel)]="novaAnotacaoSessao"
+        ></textarea>
+        <button class="btn-primary" (click)="adicionarSessao()">Salvar Evolução</button>
+      </div>
+
+      <div class="historico-sessoes">
+        <h4>Histórico de Evoluções</h4>
+        <div *ngIf="pacienteSelecionado.sessoes.length === 0" class="empty-state">
+          Nenhuma sessão registrada para este paciente ainda.
+        </div>
+
+        <div *ngFor="let sessao of pacienteSelecionado.sessoes" class="sessao-card">
+          <div class="sessao-data">📅 {{ sessao.data | date:'dd/MM/yyyy' }}</div>
+          <p class="sessao-texto" [class.blur-text]="modoPrivacidade">
+            {{ sessao.anotacoes }}
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <ng-template #semPaciente>
+      <div class="detalhes-paciente empty-selection">
+        <p>Selecione um paciente na lista ao lado ou cadastre um novo.</p>
+      </div>
+    </ng-template>
+
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="exibirModalNovoPaciente">
+  <div class="modal-card">
+    <h3>Cadastrar Novo Paciente</h3>
+    
+    <label>Nome Completo*</label>
+    <input type="text" [(ngModel)]="novoNome" placeholder="Ex: João da Silva" />
+
+    <label>Telefone / WhatsApp</label>
+    <input type="text" [(ngModel)]="novoTelefone" placeholder="(00) 00000-0000" />
+
+    <label>E-mail</label>
+    <input type="email" [(ngModel)]="novoEmail" placeholder="paciente@email.com" />
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="exibirModalNovoPaciente = false">Cancelar</button>
+      <button class="btn-primary" (click)="cadastrarPaciente()">Salvar Paciente</button>
+    </div>
+  </div>
+</div>

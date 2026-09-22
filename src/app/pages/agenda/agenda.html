@@ -1,0 +1,91 @@
+<app-header></app-header>
+
+<div class="agenda-container">
+  
+  <div class="top-bar">
+    <div>
+      <h2>Agenda Clínica</h2>
+      <p class="subtitle">Gerencie os horários e sessões dos seus pacientes</p>
+    </div>
+    <button class="btn-primary" (click)="exibirModal = true">+ Novo Agendamento</button>
+  </div>
+
+  <!-- Filtro por Data -->
+  <div class="filter-bar">
+    <label for="dataSelect">Filtrar Data:</label>
+    <input type="date" id="dataSelect" [(ngModel)]="dataFiltro" />
+  </div>
+
+  <!-- Tabela de Horários -->
+  <div class="agenda-table-card">
+    <table *ngIf="agendamentosFiltrados.length > 0; else semAgendamentos">
+      <thead>
+        <tr>
+          <th>Horário</th>
+          <th>Paciente</th>
+          <th>Modalidade</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of agendamentosFiltrados">
+          <td><strong>{{ item.horario }}</strong></td>
+          <td>{{ item.pacienteNome }}</td>
+          <td><span class="badge-type">{{ item.modalidade }}</span></td>
+          <td>
+            <span class="badge-status" [ngClass]="item.status.toLowerCase()">
+              {{ item.status }}
+            </span>
+          </td>
+          <td class="action-buttons">
+            <button class="btn-sm btn-confirm" (click)="alterarStatus(item, 'Confirmado')">✓</button>
+            <button class="btn-sm btn-done" (click)="alterarStatus(item, 'Concluído')">★</button>
+            <button class="btn-sm btn-cancel" (click)="alterarStatus(item, 'Cancelado')">✕</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #semAgendamentos>
+      <div class="empty-state">
+        <p>Nenhuma consulta agendada para esta data ({{ dataFiltro | date:'dd/MM/yyyy' }}).</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<!-- Modal Novo Agendamento -->
+<div class="modal-backdrop" *ngIf="exibirModal">
+  <div class="modal-card">
+    <h3>Novo Agendamento</h3>
+
+    <label>Paciente*</label>
+    <input 
+      type="text" 
+      list="pacientesList" 
+      [(ngModel)]="novoPaciente" 
+      placeholder="Selecione ou digite o nome..."
+    />
+    <datalist id="pacientesList">
+      <option *ngFor="let p of pacientesCadastrados" [value]="p"></option>
+    </datalist>
+
+    <label>Data*</label>
+    <input type="date" [(ngModel)]="novaData" />
+
+    <label>Horário*</label>
+    <input type="time" [(ngModel)]="novoHorario" />
+
+    <label>Modalidade</label>
+    <select [(ngModel)]="novaModalidade">
+      <option value="Presencial">Presencial</option>
+      <option value="Online">Online</option>
+    </select>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="exibirModal = false">Cancelar</button>
+      <button class="btn-primary" (click)="criarAgendamento()">Agendar</button>
+    </div>
+  </div>
+</div>
