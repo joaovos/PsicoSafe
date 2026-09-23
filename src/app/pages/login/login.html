@@ -1,43 +1,128 @@
 <div class="login-container">
-  <div class="login-card">
-    <div class="header">
-      <h2>PsicoSafe</h2>
-    </div>
-
-    <form (ngSubmit)="onSubmit()">
-      <div *ngIf="isModoCadastro" class="form-group">
-        <label>Nome Completo</label>
-        <input type="text" [(ngModel)]="nome" name="nome" placeholder="Nome do Profissional" required>
+  <div class="auth-left">
+    <app-carousel></app-carousel>
+  </div>
+  
+  <div class="auth-right">
+    <div class="login-card">
+      <div class="header">
+        <h2>PsicoSafe</h2>
       </div>
 
-      <div class="form-group">
-        <label>E-mail</label>
-        <input type="email" [(ngModel)]="email" name="email" placeholder="psicologo@email.com" required>
+
+      <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Nome Completo (Apenas no Cadastro) -->
+        @if (isModoCadastro) {
+          <div class="form-group">
+            <label for="nome">Nome Completo</label>
+            <input 
+              id="nome"
+              type="text" 
+              formControlName="nome" 
+              placeholder="Nome do Profissional" 
+            />
+            @if (authForm.get('nome')?.touched && authForm.get('nome')?.errors?.['required']) {
+              <small class="erro-campo">O nome completo é obrigatório.</small>
+            }
+          </div>
+        }
+
+
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input 
+            id="email"
+            type="email" 
+            formControlName="email" 
+            placeholder="psicologo@email.com" 
+          />
+          @if (authForm.get('email')?.touched && authForm.get('email')?.errors) {
+            <small class="erro-campo">
+              @if (authForm.get('email')?.errors?.['required']) {
+                O e-mail é obrigatório.
+              }
+              @if (authForm.get('email')?.errors?.['invalidEmailFormat']) {
+                Digite um e-mail válido (exemplo: nome&#64;dominio.com).
+              }
+            </small>
+          }
+        </div>
+
+        @if (isModoCadastro) {
+          <div class="form-group">
+            <label for="crp">Registro CRP</label>
+            <input 
+              id="crp"
+              type="text" 
+              formControlName="crp" 
+              placeholder="00/00000" 
+              maxlength="8"
+              (input)="onCrpInput($event)"
+            />
+            @if (authForm.get('crp')?.touched && authForm.get('crp')?.errors) {
+              <small class="erro-campo">
+                @if (authForm.get('crp')?.errors?.['required']) {
+                  O CRP é obrigatório.
+                }
+                @if (authForm.get('crp')?.errors?.['invalidCrpFormat']) {
+                  Informe o CRP no formato exato 00/00000 (8 caracteres).
+                }
+              </small>
+            }
+          </div>
+        }
+
+       
+        <div class="form-group">
+          <label for="senha">Senha</label>
+          <input 
+            id="senha"
+            type="password" 
+            formControlName="senha" 
+            placeholder="••••••••" 
+          />
+          @if (authForm.get('senha')?.touched && authForm.get('senha')?.errors) {
+            <small class="erro-campo">
+              @if (authForm.get('senha')?.errors?.['required']) {
+                A senha é obrigatória.
+              }
+              @if (authForm.get('senha')?.errors?.['minlength']) {
+                A senha deve ter no mínimo 8 caracteres.
+              }
+              @if (authForm.get('senha')?.errors?.['sequentialChars']) {
+                A senha não pode conter caracteres em sequência (ex: 123, abc, 321).
+              }
+            </small>
+          }
+        </div>
+
+        <div class="termos-group">
+          <label class="termos-label" for="termosUso">
+            <input id="termosUso" type="checkbox" formControlName="termosUso" />
+            <span>Concordo com o armazenamento de dados clínicos sob as normas da LGPD e do CFP.</span>
+          </label>
+          @if (authForm.get('termosUso')?.touched && authForm.get('termosUso')?.errors?.['required']) {
+            <small class="erro-campo">É necessário concordar com os termos de uso.</small>
+          }
+        </div>
+
+        @if (mensagemErro) {
+          <div class="erro-mensagem">
+            {{ mensagemErro }}
+          </div>
+        }
+
+        <button type="submit" class="btn-primary">
+          {{ isModoCadastro ? 'Cadastrar' : 'Entrar' }}
+        </button>
+      </form>
+
+      <div class="footer">
+        <button type="button" (click)="alternarModo()" class="btn-link">
+          {{ isModoCadastro ? 'Já tem conta? Faça Login' : 'Não tem conta? Cadastre-se' }}
+        </button>
       </div>
-
-      <div *ngIf="isModoCadastro" class="form-group">
-        <label>Registro CRP</label>
-        <input type="text" [(ngModel)]="crp" name="crp" placeholder="CRP 00/00000" required>
-      </div>
-
-      <div class="form-group">
-        <label>Senha</label>
-        <input type="password" [(ngModel)]="senha" name="senha" placeholder="••••••••" required>
-      </div>
-
-      <div *ngIf="mensagemErro" class="erro-mensagem">
-        {{ mensagemErro }}
-      </div>
-
-      <button type="submit" class="btn-primary">
-        {{ isModoCadastro ? 'Cadastrar' : 'Entrar no Sistema' }}
-      </button>
-    </form>
-
-    <div class="footer">
-      <button (click)="alternarModo()" class="btn-link">
-        {{ isModoCadastro ? 'Já tem conta? Faça Login' : 'Não tem conta? Cadastre-se' }}
-      </button>
     </div>
   </div>
 </div>

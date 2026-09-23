@@ -60,32 +60,45 @@
   <div class="modal-card">
     <h3>Novo Agendamento</h3>
 
-    <label>Paciente*</label>
-    <input 
+    <form [formGroup]="novoAgendamentoForm" (ngSubmit)="criarAgendamento()">
+      <label for="novoPaciente">Paciente*</label>
+      <input 
+        id="novoPaciente"
       type="text" 
       list="pacientesList" 
-      [(ngModel)]="novoPaciente" 
+      formControlName="pacienteNome" 
       placeholder="Selecione ou digite o nome..."
-    />
-    <datalist id="pacientesList">
-      <option *ngFor="let p of pacientesCadastrados" [value]="p"></option>
-    </datalist>
+      />
+      <datalist id="pacientesList">
+        <option *ngFor="let p of pacientesCadastrados" [value]="p"></option>
+      </datalist>
+      <small class="erro-campo" *ngIf="novoAgendamentoForm.controls.pacienteNome.touched && novoAgendamentoForm.controls.pacienteNome.errors">
+        Informe o nome do paciente (mínimo de 3 caracteres).
+      </small>
 
-    <label>Data*</label>
-    <input type="date" [(ngModel)]="novaData" />
+      <label for="novaData">Data*</label>
+      <input id="novaData" type="date" formControlName="data" />
+      <small class="erro-campo" *ngIf="novoAgendamentoForm.controls.data.touched && novoAgendamentoForm.controls.data.errors">
+        <span *ngIf="novoAgendamentoForm.controls.data.errors['required']">Informe a data.</span>
+        <span *ngIf="novoAgendamentoForm.controls.data.errors['pastDate']">A data não pode ser anterior a hoje.</span>
+      </small>
 
-    <label>Horário*</label>
-    <input type="time" [(ngModel)]="novoHorario" />
+      <label for="novoHorario">Horário*</label>
+      <input id="novoHorario" type="time" formControlName="horario" />
+      <small class="erro-campo" *ngIf="novoAgendamentoForm.controls.horario.touched && novoAgendamentoForm.controls.horario.errors">
+        Informe o horário do atendimento.
+      </small>
 
-    <label>Modalidade</label>
-    <select [(ngModel)]="novaModalidade">
-      <option value="Presencial">Presencial</option>
-      <option value="Online">Online</option>
-    </select>
+      <label for="novaModalidade">Modalidade</label>
+      <select id="novaModalidade" formControlName="modalidade">
+        <option value="Presencial">Presencial</option>
+        <option value="Online">Online</option>
+      </select>
 
-    <div class="modal-actions">
-      <button class="btn-secondary" (click)="exibirModal = false">Cancelar</button>
-      <button class="btn-primary" (click)="criarAgendamento()">Agendar</button>
-    </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="exibirModal = false">Cancelar</button>
+        <button type="submit" class="btn-primary">Agendar</button>
+      </div>
+    </form>
   </div>
 </div>

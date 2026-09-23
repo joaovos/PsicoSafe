@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header';
+import { PsicoSafeValidators } from '../../validators/psicosafe-validators';
 
 export interface Sessao {
   data: string;
@@ -20,7 +22,7 @@ export interface Paciente {
 @Component({
   selector: 'app-prontuario',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HeaderComponent],
   templateUrl: './prontuario.html',
   styleUrl: './prontuario.css'
 })
@@ -30,9 +32,11 @@ export class Prontuario implements OnInit {
   filtroBusca = '';
   modoPrivacidade = false;
   exibirModalNovoPaciente = false;
-  novoNome = '';
-  novoTelefone = '';
-  novoEmail = '';
+  novoPacienteForm = new FormGroup({
+    nome: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3)] }),
+    telefone: new FormControl('', { nonNullable: true, validators: PsicoSafeValidators.phoneFormat() }),
+    email: new FormControl('', { nonNullable: true, validators: PsicoSafeValidators.emailFormat() })
+  });
 
   novaAnotacaoSessao = '';
 
@@ -74,13 +78,16 @@ if (this.pacientes.length > 0) {
   }
 
   cadastrarPaciente() {
-    if (!this.novoNome.trim()) return;
+    this.novoPacienteForm.markAllAsTouched();
+    if (this.novoPacienteForm.invalid) return;
+
+    const { nome, telefone, email } = this.novoPacienteForm.getRawValue();
 
     const novo: Paciente = {
       id: Date.now(),
-      nome: this.novoNome,
-      telefone: this.novoTelefone,
-      email: this.novoEmail,
+      nome: nome.trim(),
+      telefone: telefone.trim(),
+      email: email.trim(),
       status: 'Ativo',
       sessoes: []
     };
@@ -88,10 +95,16 @@ if (this.pacientes.length > 0) {
     this.pacientes.push(novo);
     this.salvarPacientes();
     this.selecionarPaciente(novo);
-    this.novoNome = '';
-    this.novoTelefone = '';
-    this.novoEmail = '';
+    this.novoPacienteForm.reset({ nome: '', telefone: '', email: '' });
     this.exibirModalNovoPaciente = false;
+  }
+
+  onTelefoneInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const telefone = input.value.replace(/\D/g, '').slice(0, 11);
+
+    input.value = telefone;
+    this.novoPacienteForm.controls.telefone.setValue(telefone);
   }
 
   adicionarSessao() {

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header';
+import { PsicoSafeValidators } from '../../validators/psicosafe-validators';
 
 export interface Agendamento {
   id: number;
@@ -15,7 +17,7 @@ export interface Agendamento {
 @Component({
   selector: 'app-agenda',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HeaderComponent],
   templateUrl: './agenda.html',
   styleUrl: './agenda.css'
 })
@@ -25,10 +27,12 @@ export class AgendaComponent implements OnInit {
   dataFiltro: string = new Date().toISOString().split('T')[0];
 
   exibirModal = false;
-  novoPaciente = '';
-  novaData = new Date().toISOString().split('T')[0];
-  novoHorario = '09:00';
-  novaModalidade: 'Presencial' | 'Online' = 'Presencial';
+  novoAgendamentoForm = new FormGroup({
+    pacienteNome: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3)] }),
+    data: new FormControl(new Date().toISOString().split('T')[0], { nonNullable: true, validators: [Validators.required, PsicoSafeValidators.dateNotInPast()] }),
+    horario: new FormControl('09:00', { nonNullable: true, validators: Validators.required }),
+    modalidade: new FormControl<'Presencial' | 'Online'>('Presencial', { nonNullable: true, validators: Validators.required })
+  });
 
   ngOnInit() {
     this.carregarPacientes();
@@ -64,21 +68,29 @@ export class AgendaComponent implements OnInit {
   }
 
   criarAgendamento() {
-    if (!this.novoPaciente.trim()) return;
+    this.novoAgendamentoForm.markAllAsTouched();
+    if (this.novoAgendamentoForm.invalid) return;
+
+    const { pacienteNome, data, horario, modalidade } = this.novoAgendamentoForm.getRawValue();
 
     const novo: Agendamento = {
       id: Date.now(),
-      pacienteNome: this.novoPaciente,
-      data: this.novaData,
-      horario: this.novoHorario,
-      modalidade: this.novaModalidade,
+      pacienteNome: pacienteNome.trim(),
+      data,
+      horario,
+      modalidade,
       status: 'Aguardando'
     };
 
     this.agendamentos.push(novo);
     this.salvarAgendamentos();
 
-    this.novoPaciente = '';
+    this.novoAgendamentoForm.reset({
+      pacienteNome: '',
+      data: new Date().toISOString().split('T')[0],
+      horario: '09:00',
+      modalidade: 'Presencial'
+    });
     this.exibirModal = false;
   }
 

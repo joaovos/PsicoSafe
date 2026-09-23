@@ -12,7 +12,7 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [authGuard]
   },
-  { path: 'prontuario', component: Prontuario },
+  { path: 'prontuario', component: Prontuario, canActivate: [authGuard] },
   { path: 'agenda', component: AgendaComponent, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }

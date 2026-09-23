@@ -1,0 +1,18 @@
+<div class="carousel-container" (mouseenter)="pararAutoplay()" (mouseleave)="iniciarAutoplay()">
+  <div class="slide-content">
+    <span class="slide-badge">{{ slides[currentIndex].tag }}</span>
+    <div class="slide-icon">{{ slides[currentIndex].icone }}</div>
+    <h3>{{ slides[currentIndex].titulo }}</h3>
+    <p>{{ slides[currentIndex].descricao }}</p>
+  </div>
+
+  
+  <div class="carousel-dots">
+    <span 
+      *ngFor="let slide of slides; let i = index" 
+      class="dot" 
+      [class.active]="i === currentIndex"
+      (click)="irParaSlide(i)">
+    </span>
+  </div>
+</div>

@@ -165,3 +165,37 @@ td {
   background: #fff3cd;
   color: #856404;
 }
+
+@media (max-width: 700px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+
+  .dashboard-top {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .btn-privacy {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .table-section {
+    padding: 16px;
+  }
+
+  .cards-grid {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .card {
+    padding: 16px;
+  }
+
+  .card-info h3 {
+    font-size: 1.35rem;
+  }
+}

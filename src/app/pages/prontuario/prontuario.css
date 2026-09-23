@@ -252,10 +252,27 @@
   color: #26619c;
 }
 
+.modal-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .modal-card input {
   padding: 10px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
+}
+
+.modal-card input.ng-invalid.ng-touched {
+  border-color: #d64545;
+  background-color: #fffafa;
+}
+
+.erro-campo {
+  margin-top: -6px;
+  color: #b42318;
+  font-size: 0.78rem;
 }
 
 .modal-actions {
@@ -277,4 +294,68 @@
   align-items: center;
   justify-content: center;
   color: #94a3b8;
+}
+
+@media (max-width: 800px) {
+  .prontuario-container {
+    padding: 16px;
+  }
+
+  .top-bar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+
+  .actions .btn-primary,
+  .actions .btn-privacy {
+    flex: 1 1 200px;
+  }
+
+  .prontuario-grid {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .sidebar-pacientes {
+    max-height: 320px;
+  }
+
+  .paciente-header {
+    gap: 16px;
+    flex-direction: column;
+  }
+
+  .btn-danger-outline {
+    width: 100%;
+  }
+
+  .detalhes-paciente {
+    padding: 18px;
+  }
+
+  .modal-card {
+    width: calc(100% - 32px);
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .prontuario-container {
+    padding: 12px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions .btn-primary,
+  .actions .btn-privacy {
+    width: 100%;
+  }
 }

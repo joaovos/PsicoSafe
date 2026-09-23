@@ -6,7 +6,7 @@
     <h2>Prontuário Eletrônico</h2>
     <div class="actions">
       <button class="btn-privacy" [class.active]="modoPrivacidade" (click)="alternarPrivacidade()">
-        <span>🔒</span> {{ modoPrivacidade ? 'Desativar Privacidade' : 'Modo Privacidade (LGPD)' }}
+        <span>🔒</span> {{ modoPrivacidade ? 'Desativar Privacidade' : 'Modo Privacidade' }}
       </button>
       <button class="btn-primary" (click)="exibirModalNovoPaciente = true">+ Novo Paciente</button>
     </div>
@@ -48,7 +48,7 @@
           </p>
         </div>
         <button class="btn-danger-outline" (click)="excluirPaciente(pacienteSelecionado.id)">
-          Excluir Registro (LGPD)
+          Excluir Registro
         </button>
       </div>
 
@@ -91,19 +91,38 @@
 <div class="modal-backdrop" *ngIf="exibirModalNovoPaciente">
   <div class="modal-card">
     <h3>Cadastrar Novo Paciente</h3>
-    
-    <label>Nome Completo*</label>
-    <input type="text" [(ngModel)]="novoNome" placeholder="Ex: João da Silva" />
 
-    <label>Telefone / WhatsApp</label>
-    <input type="text" [(ngModel)]="novoTelefone" placeholder="(00) 00000-0000" />
+    <form [formGroup]="novoPacienteForm" (ngSubmit)="cadastrarPaciente()">
+      <label for="novoNome">Nome Completo*</label>
+      <input id="novoNome" type="text" formControlName="nome" placeholder="Ex: Joao da Silva" />
+      <small class="erro-campo" *ngIf="novoPacienteForm.controls.nome.touched && novoPacienteForm.controls.nome.errors">
+        Informe o nome completo (mínimo de 3 caracteres).
+      </small>
 
-    <label>E-mail</label>
-    <input type="email" [(ngModel)]="novoEmail" placeholder="paciente@email.com" />
+      <label for="novoTelefone">Telefone / WhatsApp</label>
+      <input
+        id="novoTelefone"
+        type="tel"
+        inputmode="numeric"
+        maxlength="11"
+        formControlName="telefone"
+        (input)="onTelefoneInput($event)"
+        placeholder="71 91234-5678"
+      />
+      <small class="erro-campo" *ngIf="novoPacienteForm.controls.telefone.touched && novoPacienteForm.controls.telefone.errors">
+        Informe um telefone com exatamente 11 dígitos.
+      </small>
 
-    <div class="modal-actions">
-      <button class="btn-secondary" (click)="exibirModalNovoPaciente = false">Cancelar</button>
-      <button class="btn-primary" (click)="cadastrarPaciente()">Salvar Paciente</button>
-    </div>
+      <label for="novoEmail">E-mail</label>
+      <input id="novoEmail" type="email" formControlName="email" placeholder="paciente@email.com" />
+      <small class="erro-campo" *ngIf="novoPacienteForm.controls.email.touched && novoPacienteForm.controls.email.errors">
+        Informe um e-mail válido com &#64; e domínio (ex.: paciente&#64;email.com).
+      </small>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="exibirModalNovoPaciente = false">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Paciente</button>
+      </div>
+    </form>
   </div>
 </div>
