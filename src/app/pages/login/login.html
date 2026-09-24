@@ -100,7 +100,11 @@
         <div class="termos-group">
           <label class="termos-label" for="termosUso">
             <input id="termosUso" type="checkbox" formControlName="termosUso" />
-            <span>Concordo com o armazenamento de dados clínicos sob as normas da LGPD e do CFP.</span>
+            @if (isModoCadastro) {
+              <span>Concordo com o armazenamento de dados clínicos sob as normas da <a href="https://www.gov.br/mds/pt-br/acesso-a-informacao/governanca/integridade/campanhas/lgpd" target="_blank" rel="noopener noreferrer">LGPD</a> e do <a href="https://site.cfp.org.br/legislacao/codigo-de-etica/" target="_blank" rel="noopener noreferrer">CFP</a>.</span>
+            } @else {
+              <span>Manter conectado</span>
+            }
           </label>
           @if (authForm.get('termosUso')?.touched && authForm.get('termosUso')?.errors?.['required']) {
             <small class="erro-campo">É necessário concordar com os termos de uso.</small>
